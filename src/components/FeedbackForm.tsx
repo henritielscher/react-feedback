@@ -3,6 +3,7 @@ import { useFeedbackContext } from "../context/FeedbackContext";
 import React, { useState, useEffect } from "react";
 import Button from "./shared/Button";
 import RatingSelect from "./RatingSelect";
+import { v4 as uuidv4 } from "uuid";
 
 function FeedbackForm() {
 	const [text, setText] = useState<string>("");
@@ -77,6 +78,3 @@ function FeedbackForm() {
 }
 
 export default FeedbackForm;
-function uuidv4(): any {
-	throw new Error("Function not implemented.");
-}

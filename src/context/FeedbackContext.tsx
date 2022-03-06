@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from "uuid";
 import { createContext, useContext, useState } from "react";
 import { FeedbackEntry } from "../components/FeedbackList";
 import FeedbackData from "../data/FeedbackData";

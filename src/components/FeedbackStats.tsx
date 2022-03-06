@@ -1,5 +1,4 @@
 import { FeedbackEntry } from "./FeedbackList";
-import { useContext } from "react";
 import { useFeedbackContext } from "../context/FeedbackContext";
 
 function FeedbackStats() {
