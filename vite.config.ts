@@ -10,4 +10,7 @@ export default defineConfig({
 		emptyOutDir: true,
 		outDir: "../dist",
 	},
+	server: {
+		port: 3006,
+	},
 });
