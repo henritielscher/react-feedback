@@ -1,30 +1,32 @@
 {
-  "name": "boilerplate-vite-react-ts-tailwind",
-  "private": true,
-  "version": "0.0.0",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "framer-motion": "^4.1.17",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-icons": "^4.3.1",
-    "react-router-dom": "^6.2.2",
-    "uuid": "^8.3.2"
-  },
-  "devDependencies": {
-    "@types/react": "^17.0.33",
-    "@types/react-dom": "^17.0.10",
-    "@types/uuid": "^8.3.4",
-    "@vitejs/plugin-react": "^1.0.7",
-    "autoprefixer": "^10.4.2",
-    "postcss": "^8.4.7",
-    "sass": "^1.49.9",
-    "tailwindcss": "^3.0.23",
-    "typescript": "^4.5.4",
-    "vite": "^2.8.0"
-  }
+	"name": "boilerplate-vite-react-ts-tailwind",
+	"private": true,
+	"version": "0.0.0",
+	"scripts": {
+		"dev": "concurrently \"vite\" \"npm run db\"",
+		"build": "tsc && vite build",
+		"preview": "vite preview",
+		"db": "json-server --watch db.json --port 5000"
+	},
+	"dependencies": {
+		"framer-motion": "^4.1.17",
+		"react": "^17.0.2",
+		"react-dom": "^17.0.2",
+		"react-icons": "^4.3.1",
+		"react-router-dom": "^6.2.2",
+		"uuid": "^8.3.2"
+	},
+	"devDependencies": {
+		"@types/react": "^17.0.33",
+		"@types/react-dom": "^17.0.10",
+		"@types/uuid": "^8.3.4",
+		"@vitejs/plugin-react": "^1.0.7",
+		"autoprefixer": "^10.4.2",
+		"json-server": "^0.17.0",
+		"postcss": "^8.4.7",
+		"sass": "^1.49.9",
+		"tailwindcss": "^3.0.23",
+		"typescript": "^4.5.4",
+		"vite": "^2.8.0"
+	}
 }

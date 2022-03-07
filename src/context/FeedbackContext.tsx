@@ -1,6 +1,5 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { FeedbackEntry } from "../components/FeedbackList";
-import FeedbackData from "../data/FeedbackData";
 
 type FeedbackEdit = {
 	item: FeedbackEntry;
@@ -13,11 +12,12 @@ type FeedbackProviderProps = {
 
 type FeedbackContext = {
 	feedback: FeedbackEntry[];
-	addFeedback: (newFeedback: FeedbackEntry) => void;
-	deleteFeedback: (id: number | string) => void;
+	addFeedback: (newFeedback: FeedbackEntry) => Promise<void>;
+	deleteFeedback: (id: number | string) => Promise<void>;
 	editFeedback: (item: FeedbackEntry) => void;
 	feedbackEdit: FeedbackEdit;
-	updateFeedback: (updatedFeedback: FeedbackEntry) => void;
+	updateFeedback: (updatedFeedback: FeedbackEntry) => Promise<void>;
+	isLoading: boolean;
 };
 
 const FeedbackContext = createContext<FeedbackContext | undefined>(undefined);
@@ -34,18 +34,41 @@ export function useFeedbackContext() {
 }
 
 export const FeedbackProvider = ({ children }: FeedbackProviderProps) => {
-	const [feedback, setFeedback] = useState<FeedbackEntry[]>(FeedbackData);
-
+	const baseUrl = "http://localhost:5000";
+	const [isLoading, setIsLoading] = useState<boolean>(true);
+	const [feedback, setFeedback] = useState<FeedbackEntry[]>([]);
 	const [feedbackEdit, setFeedbackEdit] = useState<FeedbackEdit>({
 		item: defaultFeedback,
 		edit: false,
 	});
 
-	const updateFeedback = (updatedItem: FeedbackEntry) => {
+	useEffect(() => {
+		fetchFeedback();
+	}, []); // mit leerem Array als Argument wird die Funktion nur einmal ausgeführt
+
+	// FETCHING
+	const fetchFeedback = async () => {
+		const response = await fetch(`${baseUrl}/feedback`);
+		const data = await response.json();
+
+		setFeedback(data);
+		setIsLoading(false);
+	};
+
+	// CRUD
+	const updateFeedback = async (
+		updatedItem: FeedbackEntry
+	): Promise<void> => {
+		const response = await fetch(`${baseUrl}/feedback/${updatedItem.id}`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(updatedItem),
+		});
+		const data = await response.json();
 		setFeedback(
-			feedback.map((item) =>
-				item.id === updatedItem.id ? updatedItem : item
-			)
+			feedback.map((item) => (item.id === data.id ? data : item))
 		);
 	};
 
@@ -56,14 +79,32 @@ export const FeedbackProvider = ({ children }: FeedbackProviderProps) => {
 		});
 	};
 
-	const deleteFeedback = (id: number | string): void => {
-		if (window.confirm("Are you sure you want to delete?")) {
+	const deleteFeedback = async (id: number | string): Promise<void> => {
+		try {
+			await fetch(`${baseUrl}/feedback/${id}`, {
+				method: "DELETE",
+			});
 			setFeedback(feedback.filter((item) => item.id !== id));
+		} catch (error: any) {
+			throw Error(error);
 		}
 	};
 
-	const addFeedback = (newFeedback: FeedbackEntry): void => {
-		setFeedback([newFeedback, ...feedback]);
+	const addFeedback = async (newFeedback: FeedbackEntry): Promise<void> => {
+		try {
+			const response = await fetch(`${baseUrl}/feedback`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(newFeedback),
+			});
+
+			const data = await response.json();
+			setFeedback([data, ...feedback]);
+		} catch (error: any) {
+			throw Error(error);
+		}
 	};
 
 	return (
@@ -75,6 +116,7 @@ export const FeedbackProvider = ({ children }: FeedbackProviderProps) => {
 				editFeedback,
 				feedbackEdit,
 				updateFeedback,
+				isLoading,
 			}}
 		>
 			{children}
